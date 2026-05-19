@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluxograma ChargeBot — GoodWe EV Challenge 2026</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --text2: #555;
+    --border: rgba(0,0,0,0.15);
+    --s: rgba(0,0,0,0.35);
+    --b: rgba(0,0,0,0.18);
+    --teal-fill: #E1F5EE; --teal-stroke: #0F6E56; --teal-text: #085041;
+    --purple-fill: #EEEDFE; --purple-stroke: #534AB7; --purple-text: #3C3489;
+    --amber-fill: #FAEEDA; --amber-stroke: #854F0B; --amber-text: #633806;
+    --blue-fill: #E6F1FB; --blue-stroke: #185FA5; --blue-text: #0C447C;
+    --coral-fill: #FAECE7; --coral-stroke: #993C1D; --coral-text: #712B13;
+    --gray-fill: #F1EFE8; --gray-stroke: #5F5E5A; --gray-text: #444441;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1e; --text: #e8e6de; --text2: #aaa;
+      --border: rgba(255,255,255,0.12); --s: rgba(255,255,255,0.3); --b: rgba(255,255,255,0.15);
+      --teal-fill: #04342C; --teal-stroke: #5DCAA5; --teal-text: #9FE1CB;
+      --purple-fill: #26215C; --purple-stroke: #AFA9EC; --purple-text: #CECBF6;
+      --amber-fill: #412402; --amber-stroke: #EF9F27; --amber-text: #FAC775;
+      --blue-fill: #042C53; --blue-stroke: #85B7EB; --blue-text: #B5D4F4;
+      --coral-fill: #4A1B0C; --coral-stroke: #F0997B; --coral-text: #F5C4B3;
+      --gray-fill: #2C2C2A; --gray-stroke: #B4B2A9; --gray-text: #D3D1C7;
+    }
+  }
+  body { margin: 0; background: var(--bg); font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 24px; }
+  h1 { font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  p { font-size: 13px; color: var(--text2); margin-top: 0; margin-bottom: 24px; }
+  svg { max-width: 680px; width: 100%; }
+  .th { font-family: system-ui, sans-serif; font-size: 14px; font-weight: 500; fill: var(--text); }
+  .ts { font-family: system-ui, sans-serif; font-size: 12px; font-weight: 400; fill: var(--text2); }
+  .arr { stroke: var(--s); stroke-width: 1.5; fill: none; }
+  .leader { stroke: var(--b); stroke-width: 0.5; stroke-dasharray: 3 2; fill: none; }
+  .teal   rect { fill: var(--teal-fill);   stroke: var(--teal-stroke);   }
+  .teal   .th  { fill: var(--teal-text);   } .teal   .ts { fill: var(--teal-stroke);   }
+  .purple rect { fill: var(--purple-fill); stroke: var(--purple-stroke); }
+  .purple .th  { fill: var(--purple-text); } .purple .ts { fill: var(--purple-stroke); }
+  .amber  rect { fill: var(--amber-fill);  stroke: var(--amber-stroke);  }
+  .amber  .th  { fill: var(--amber-text);  } .amber  .ts { fill: var(--amber-stroke);  }
+  .blue   rect { fill: var(--blue-fill);   stroke: var(--blue-stroke);   }
+  .blue   .th  { fill: var(--blue-text);   } .blue   .ts { fill: var(--blue-stroke);   }
+  .coral  rect { fill: var(--coral-fill);  stroke: var(--coral-stroke);  }
+  .coral  .th  { fill: var(--coral-text);  } .coral  .ts { fill: var(--coral-stroke);  }
+  .gray   rect { fill: var(--gray-fill);   stroke: var(--gray-stroke);   }
+  .gray   .th  { fill: var(--gray-text);   } .gray   .ts { fill: var(--gray-stroke);   }
+</style>
+</head>
+<body>
+<h1>Fluxograma ChargeBot — ChargeGrid Intelligence</h1>
+<p>EV Challenge 2026 · FIAP × GoodWe</p>
+<svg viewBox="0 0 680 920" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Fluxograma ChargeBot GoodWe</title>
+  <desc>Fluxo de entrada do usuário, classificação de intenção, busca RAG, geração LLM e saída ao operador comercial</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Operador -->
+  <circle cx="340" cy="44" r="18" fill="none" stroke="var(--s)" stroke-width="1.5"/>
+  <line x1="340" y1="62" x2="340" y2="88" stroke="var(--s)" stroke-width="1.5"/>
+  <line x1="318" y1="74" x2="362" y2="74" stroke="var(--s)" stroke-width="1.5"/>
+  <line x1="340" y1="88" x2="320" y2="110" stroke="var(--s)" stroke-width="1.5"/>
+  <line x1="340" y1="88" x2="360" y2="110" stroke="var(--s)" stroke-width="1.5"/>
+  <text class="ts" x="340" y="122" text-anchor="middle">Operador Comercial</text>
+  <line x1="340" y1="132" x2="340" y2="152" class="arr" marker-end="url(#arrow)"/>
+
+  <!-- 1. Input -->
+  <g class="teal">
+    <rect x="210" y="152" width="260" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="172" text-anchor="middle" dominant-baseline="central">Mensagem do usuário</text>
+    <text class="ts" x="340" y="190" text-anchor="middle" dominant-baseline="central">Pergunta em linguagem natural</text>
+  </g>
+  <line x1="340" y1="204" x2="340" y2="226" class="arr" marker-end="url(#arrow)"/>
+
+  <!-- 2. Classificação -->
+  <g class="purple">
+    <rect x="190" y="226" width="300" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="246" text-anchor="middle" dominant-baseline="central">Classificação de intenção</text>
+    <text class="ts" x="340" y="264" text-anchor="middle" dominant-baseline="central">Status · Faturamento · Alerta · Suporte</text>
+  </g>
+  <line x1="340" y1="278" x2="340" y2="300" class="arr" marker-end="url(#arrow)"/>
+
+  <!-- Roteador 1 -->
+  <polygon points="340,300 440,342 340,384 240,342" fill="none" stroke="var(--s)" stroke-width="1"/>
+  <text class="th" x="340" y="338" text-anchor="middle" dominant-baseline="central">Requer</text>
+  <text class="ts" x="340" y="356" text-anchor="middle" dominant-baseline="central">dados ao vivo?</text>
+
+  <!-- Ramo Sim -->
+  <text class="ts" x="210" y="337" text-anchor="middle">Sim</text>
+  <line x1="240" y1="342" x2="160" y2="342" class="arr" marker-end="url(#arrow)"/>
+  <g class="amber">
+    <rect x="44" y="316" width="116" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="102" y="336" text-anchor="middle" dominant-baseline="central">API ChargeGrid</text>
+    <text class="ts" x="102" y="354" text-anchor="middle" dominant-baseline="central">Dados em tempo real</text>
+  </g>
+  <path d="M102 368 L102 462 L200 462" fill="none" stroke="var(--s)" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Ramo Não -->
+  <text class="ts" x="460" y="337" text-anchor="middle">Não</text>
+  <line x1="440" y1="342" x2="530" y2="342" class="arr" marker-end="url(#arrow)"/>
+  <g class="blue">
+    <rect x="530" y="316" width="126" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="593" y="336" text-anchor="middle" dominant-baseline="central">Base RAG</text>
+    <text class="ts" x="593" y="354" text-anchor="middle" dominant-baseline="central">Manuais, FAQs, erros</text>
+  </g>
+  <path d="M593 368 L593 462 L480 462" fill="none" stroke="var(--s)" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 5. Contexto -->
+  <g class="blue">
+    <rect x="200" y="436" width="280" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="456" text-anchor="middle" dominant-baseline="central">Montagem do contexto</text>
+    <text class="ts" x="340" y="474" text-anchor="middle" dominant-baseline="central">System prompt + dados + chunks RAG</text>
+  </g>
+  <line x1="340" y1="488" x2="340" y2="510" class="arr" marker-end="url(#arrow)"/>
+
+  <!-- 6. LLM -->
+  <g class="purple">
+    <rect x="190" y="510" width="300" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="530" text-anchor="middle" dominant-baseline="central">LLM — GPT-4o via OpenAI API</text>
+    <text class="ts" x="340" y="548" text-anchor="middle" dominant-baseline="central">Geração de resposta contextualizada</text>
+  </g>
+  <line x1="340" y1="562" x2="340" y2="584" class="arr" marker-end="url(#arrow)"/>
+
+  <!-- 7. Validação -->
+  <g class="coral">
+    <rect x="210" y="584" width="260" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="604" text-anchor="middle" dominant-baseline="central">Validação de saída</text>
+    <text class="ts" x="340" y="622" text-anchor="middle" dominant-baseline="central">Filtro de alucinação e formato</text>
+  </g>
+  <line x1="340" y1="636" x2="340" y2="658" class="arr" marker-end="url(#arrow)"/>
+
+  <!-- Roteador 2 -->
+  <polygon points="340,658 420,692 340,726 260,692" fill="none" stroke="var(--s)" stroke-width="1"/>
+  <text class="th" x="340" y="688" text-anchor="middle" dominant-baseline="central">Válida?</text>
+  <text class="ts" x="340" y="706" text-anchor="middle" dominant-baseline="central">Confiança adequada?</text>
+
+  <!-- Ramo Não (retry) -->
+  <text class="ts" x="462" y="688" text-anchor="middle">Não</text>
+  <line x1="420" y1="692" x2="560" y2="692" class="arr" stroke="var(--s)" marker-end="url(#arrow)"/>
+  <g class="gray">
+    <rect x="560" y="666" width="100" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="610" y="686" text-anchor="middle" dominant-baseline="central">Reprocessar</text>
+    <text class="ts" x="610" y="704" text-anchor="middle" dominant-baseline="central">Retry com fallback</text>
+  </g>
+  <path d="M610 666 L610 536 L490 536" fill="none" stroke="var(--s)" stroke-width="0.8" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+
+  <!-- Ramo Sim → resposta -->
+  <text class="ts" x="218" y="688" text-anchor="middle">Sim</text>
+  <line x1="260" y1="692" x2="340" y2="726" class="arr" marker-end="url(#arrow)"/>
+  <line x1="340" y1="726" x2="340" y2="748" class="arr" marker-end="url(#arrow)"/>
+
+  <!-- 8. Resposta -->
+  <g class="teal">
+    <rect x="210" y="748" width="260" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="768" text-anchor="middle" dominant-baseline="central">Resposta formatada</text>
+    <text class="ts" x="340" y="786" text-anchor="middle" dominant-baseline="central">Texto + tabelas + próximos passos</text>
+  </g>
+  <line x1="340" y1="800" x2="340" y2="820" class="arr" marker-end="url(#arrow)"/>
+
+  <!-- 9. Log -->
+  <g class="gray">
+    <rect x="220" y="820" width="240" height="52" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="840" text-anchor="middle" dominant-baseline="central">Log + memória da sessão</text>
+    <text class="ts" x="340" y="858" text-anchor="middle" dominant-baseline="central">Histórico das últimas 10 trocas</text>
+  </g>
+
+  <!-- Legenda -->
+  <rect x="42" y="796" width="130" height="96" rx="8" fill="none" stroke="var(--b)" stroke-width="0.5" stroke-dasharray="3 2"/>
+  <text class="ts" x="107" y="814" text-anchor="middle">Legenda</text>
+  <rect x="54" y="824" width="12" height="12" rx="3" class="teal" style="stroke-width:0.5"/>
+  <text class="ts" x="72" y="835">Entrada / Saída</text>
+  <rect x="54" y="844" width="12" height="12" rx="3" class="purple" style="stroke-width:0.5"/>
+  <text class="ts" x="72" y="855">Processamento IA</text>
+  <rect x="54" y="864" width="12" height="12" rx="3" class="amber" style="stroke-width:0.5"/>
+  <text class="ts" x="72" y="875">Dados externos</text>
+  <rect x="54" y="884" width="12" height="12" rx="3" class="gray" style="stroke-width:0.5"/>
+  <text class="ts" x="72" y="895">Controle / Log</text>
+</svg>
+</body>
+</html>
