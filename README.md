@@ -138,9 +138,9 @@ chargebot-goodwe/
 ## 🔗 Links do Projeto
 
 - **Repositório GitHub:** `https://github.com/rafaelferreirinhaquaresma-bit/ChargeBot-ChargeGrid-Intelligence`
-- **Fluxograma:** `docs/fluxograma.html`
-- **Modelo de Teste:** `docs/modelo_de_teste.md`
-- **System Prompt:** `docs/system_prompt.md`
+- **Fluxograma:** `fluxograma.html`
+- **Modelo de Teste:** `modelo_de_teste.md`
+- **System Prompt:** `system_prompt.md`
 
 ---
 
