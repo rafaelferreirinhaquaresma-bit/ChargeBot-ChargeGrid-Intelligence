@@ -132,7 +132,73 @@ chargebot-goodwe/
 ├── requirements.txt
 └── .env.example
 ```
+## 🚀 Como Executar
 
+### Passo 1 — Instalar o Ollama
+Acesse **ollama.com/download** e instale para o seu sistema operacional.
+
+### Passo 2 — Baixar o modelo
+```bash
+ollama pull llama3.2
+```
+
+### Passo 3 — Instalar dependências Python
+```bash
+pip install -r requirements.txt
+```
+
+### Passo 4 — Rodar o ChargeBot
+```bash
+python src/chargebot.py
+```
+
+### (Opcional) Rodar os testes automaticamente
+```bash
+python tests/run_tests.py
+```
+
+> 📖 Guia completo com solução de problemas: [`COMO_RODAR.md`](COMO_RODAR.md)
+
+---
+
+## 💬 Exemplos de Uso
+
+```
+Você: Quantos carregadores estão online agora?
+
+ChargeBot: Temos 10 de 12 carregadores operando (8 disponíveis, 2 em uso).
+⚠️ CG-07 em falha desde 14h23 com erro E-07 (falha de comunicação OCPP).
+🔧 CG-11 offline. Quer que eu registre um chamado técnico para o CG-07?
+```
+
+```
+Você: Qual foi a receita hoje?
+
+ChargeBot: Hoje a rede gerou R$ 912,30 em 37 sessões.
+📊 vs. ontem: +3,9% · vs. média do mês: +9,3%
+Projeção mensal: R$ 27.369 (+24,4% acima da meta de R$ 22.000). 💡
+```
+
+---
+
+## 🧪 Resultados dos Testes
+
+| # | Caso de Teste | Avaliação |
+|---|--------------|-----------|
+| 1 | Status Operacional | ✅ Adequada |
+| 2 | Faturamento e Receita | ✅ Adequada |
+| 3 | Alerta e Anomalia | ✅ Adequada |
+| 4 | Relatório + Memória | ✅ Adequada |
+| 5 | Suporte (configuração) | ✅ Adequada |
+| 6 | Código de Erro (bônus) | ✅ Adequada |
+
+---
+
+## 🎥 Vídeo de Demonstração
+
+▶️ [Link do YouTube](https://youtu.be/[ID-DO-VIDEO])
+
+---
 ---
 
 ## 🔗 Links do Projeto
