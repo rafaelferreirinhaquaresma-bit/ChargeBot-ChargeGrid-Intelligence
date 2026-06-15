@@ -1,5 +1,5 @@
 # ChargeBot — GoodWe EV Challenge 2026
+# Motor: Ollama (local, gratuito, sem API Key)
 # Instale com: pip install -r requirements.txt
 
-openai>=1.30.0          # Cliente oficial OpenAI
-python-dotenv>=1.0.0    # Carrega variáveis de ambiente do arquivo .env
+ollama>=0.3.0   # Cliente Python para o Ollama local
