@@ -229,6 +229,10 @@ Ver arquivo completo: [`tests/resultados_testes.md`](tests/resultados_testes.md)
 **Taxa de aprovação: 6/6 (100%)**
 
 ---
+## 🎥 Vídeo de Demonstração
+
+▶️ [Link do YouTube — ChargeBot Demo Sprint 2](https://youtube.com/[link-do-video])
+---
 
 ## 🔗 Links do Projeto
 
