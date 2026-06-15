@@ -134,30 +134,52 @@ chargebot-goodwe/
 ```
 ## 🚀 Como Executar
 
-### Passo 1 — Instalar o Ollama
-Acesse **ollama.com/download** e instale para o seu sistema operacional.
+### Opção 1 — Google Colab (Recomendado)
 
-### Passo 2 — Baixar o modelo
-```bash
-ollama pull llama3.2
-```
+1. Faça upload do arquivo `ChargeBot_Colab.ipynb` no [Google Colab](https://colab.research.google.com)
+2. Adicione sua chave OpenAI nos **Secrets do Colab**:
+   - Clique no ícone 🔑 no painel esquerdo
+   - Adicione: `OPENAI_API_KEY` = `sk-sua-chave-aqui`
+3. Execute as células em ordem (Ctrl+F9 para rodar todas)
+4. Use a interface visual na Célula 6 para interagir com o ChargeBot
 
-### Passo 3 — Instalar dependências Python
+### Opção 2 — Execução Local
+
+**Requisitos:** Python 3.10+ instalado
+
 ```bash
+# 1. Clone o repositório
+git clone https://github.com/[usuario]/chargebot-goodwe.git
+cd chargebot-goodwe
+
+# 2. Crie e ative um ambiente virtual (recomendado)
+python -m venv venv
+source venv/bin/activate        # Linux/macOS
+# venv\Scripts\activate         # Windows
+
+# 3. Instale as dependências
 pip install -r requirements.txt
-```
 
-### Passo 4 — Rodar o ChargeBot
-```bash
+# 4. Configure a variável de ambiente com sua chave OpenAI
+# OPÇÃO A: Arquivo .env (copie o template)
+cp .env.example .env
+# Edite .env e preencha: OPENAI_API_KEY=sk-sua-chave-aqui
+
+# OPÇÃO B: Variável de ambiente direta
+export OPENAI_API_KEY="sk-sua-chave-aqui"   # Linux/macOS
+# set OPENAI_API_KEY=sk-sua-chave-aqui      # Windows CMD
+
+# 5. Execute o chatbot
 python src/chargebot.py
 ```
 
-### (Opcional) Rodar os testes automaticamente
-```bash
-python tests/run_tests.py
-```
+### Variáveis de Ambiente
 
-> 📖 Guia completo com solução de problemas: [`COMO_RODAR.md`](COMO_RODAR.md)
+| Variável | Obrigatória | Descrição |
+|----------|-------------|-----------|
+| `OPENAI_API_KEY` | ✅ Sim | Chave de acesso à API OpenAI |
+
+> ⚠️ **Segurança:** Nunca exponha a API Key no código ou faça commit do arquivo `.env`. O `.gitignore` já está configurado para ignorá-lo.
 
 ---
 
@@ -166,39 +188,46 @@ python tests/run_tests.py
 ```
 Você: Quantos carregadores estão online agora?
 
-ChargeBot: Temos 10 de 12 carregadores operando (8 disponíveis, 2 em uso).
+ChargeBot: Temos 10 de 12 carregadores operando agora (8 disponíveis, 2 em uso).
 ⚠️ CG-07 em falha desde 14h23 com erro E-07 (falha de comunicação OCPP).
-🔧 CG-11 offline. Quer que eu registre um chamado técnico para o CG-07?
+🔧 CG-11 offline — verifique se há manutenção programada.
+Quer que eu registre um chamado técnico para o CG-07?
 ```
 
 ```
 Você: Qual foi a receita hoje?
 
-ChargeBot: Hoje a rede gerou R$ 912,30 em 37 sessões.
+ChargeBot: Hoje a rede gerou R$ 912,30 em 37 sessões — resultado sólido.
 📊 vs. ontem: +3,9% · vs. média do mês: +9,3%
-Projeção mensal: R$ 27.369 (+24,4% acima da meta de R$ 22.000). 💡
+Com esse ritmo, projeção mensal: R$ 27.369 (+24,4% acima da meta de R$ 22.000).
+💡 Momento ideal para tarifa diferenciada no pico (18h–20h). Quer configurar?
+```
+
+```
+Você: Apareceu o erro E-04 no carregador 3. O que é isso?
+
+ChargeBot: E-04 = falha de autenticação RFID no CG-03.
+Causas: cartão danificado, leitor sujo, credencial expirada.
+Workaround: QR Code ou app GoodWe. CG-03 continua operacional para outros métodos.
 ```
 
 ---
 
 ## 🧪 Resultados dos Testes
 
+Ver arquivo completo: [`tests/resultados_testes.md`](tests/resultados_testes.md)
+
 | # | Caso de Teste | Avaliação |
 |---|--------------|-----------|
 | 1 | Status Operacional | ✅ Adequada |
 | 2 | Faturamento e Receita | ✅ Adequada |
 | 3 | Alerta e Anomalia | ✅ Adequada |
-| 4 | Relatório + Memória | ✅ Adequada |
-| 5 | Suporte (configuração) | ✅ Adequada |
+| 4 | Relatório + Memória de Contexto | ✅ Adequada |
+| 5 | Suporte Operacional (configuração) | ✅ Adequada |
 | 6 | Código de Erro (bônus) | ✅ Adequada |
 
----
+**Taxa de aprovação: 6/6 (100%)**
 
-## 🎥 Vídeo de Demonstração
-
-▶️ [Link do YouTube](https://youtu.be/[ID-DO-VIDEO])
-
----
 ---
 
 ## 🔗 Links do Projeto
