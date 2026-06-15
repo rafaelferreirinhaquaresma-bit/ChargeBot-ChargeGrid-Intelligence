@@ -1,299 +1,288 @@
 """
-ChargeBot — ChargeGrid Intelligence
-EV Challenge 2026 · FIAP × GoodWe
-Sprint 2 — Implementação do Chatbot
+ChargeBot — ChargeGrid Intelligence Assistant
+GoodWe × FIAP · EV Challenge 2026 · Sprint 2
+Motor: Google Gemini (gemini-2.0-flash) — camada gratuita
 
-Tecnologias:
-  - OpenAI GPT-4o via openai SDK
-  - Few-shot prompting + system prompt contextualizado
-  - Gerenciamento de histórico de mensagens (memória de sessão)
-  - Dados operacionais simulados via função interna (mock da API ChargeGrid)
-
-Uso:
-  python chargebot.py
+Técnicas utilizadas:
+  - System prompt contextualizado (ChargeGrid Intelligence)
+  - Gerenciamento de histórico de mensagens (memória de contexto)
+  - Few-shot prompting com exemplos reais do domínio
+  - Injeção de dados simulados de telemetria (mock API ChargeGrid)
+  - Interface CLI interativa
 """
 
 import os
 import json
 import random
-import re
 from datetime import datetime, timedelta
-from openai import OpenAI
+import google.generativeai as genai
 
-
-# ──────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # CONFIGURAÇÃO
-# ──────────────────────────────────────────────────────────────────────────────
+# API Key gratuita em: aistudio.google.com/app/apikey
+# Configure com: export GOOGLE_API_KEY="sua-chave"
+# No Google Colab: use Secrets (ícone 🔑) com nome GOOGLE_API_KEY
+# ---------------------------------------------------------------------------
 
-def get_client() -> OpenAI:
-    """Inicializa o cliente OpenAI a partir de variável de ambiente."""
-    api_key = os.environ.get("OPENAI_API_KEY")
+def get_client():
+    api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         raise EnvironmentError(
-            "\n[ERRO] OPENAI_API_KEY não encontrada.\n"
-            "  → Terminal: export OPENAI_API_KEY='sua-chave'\n"
-            "  → Colab:    use Secrets (cadeado) e habilite para o notebook\n"
+            "Variável GOOGLE_API_KEY não definida.\n"
+            "  Obtenha sua chave GRATUITA em: aistudio.google.com/app/apikey\n"
+            "  Local:  export GOOGLE_API_KEY='sua-chave'\n"
+            "  Colab:  Secrets → GOOGLE_API_KEY"
         )
-    return OpenAI(api_key=api_key)
+    genai.configure(api_key=api_key)
+    return genai.GenerativeModel(
+        model_name="gemini-2.0-flash",
+        system_instruction=SYSTEM_PROMPT,
+        generation_config=genai.GenerationConfig(
+            temperature=0.3,
+            max_output_tokens=800,
+        )
+    )
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# MOCK DA API CHARGERID
-# ──────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# MOCK: DADOS SIMULADOS DA API CHARGERID
+# ---------------------------------------------------------------------------
 
 def get_network_status() -> dict:
-    now = datetime.now()
-    statuses = ["online","online","online","online","in_use","in_use",
-                "in_use","in_use","online","offline","fault","in_use"]
+    pool = ["online"] * 5 + ["in_use"] * 3 + ["fault"] * 2 + ["offline"] * 2
     chargers = []
-    for i, st in enumerate(statuses, 1):
-        cg = {
+    for i in range(1, 13):
+        status = random.choice(pool)
+        c = {
             "id": f"CG-{i:02d}",
-            "status": st,
-            "power_kw": round(random.uniform(6, 22), 1) if st == "in_use" else 0,
+            "status": status,
+            "power_kw": round(random.uniform(7.0, 22.0), 1) if status == "in_use" else 0,
+            "sessions_today": random.randint(0, 12) if status != "offline" else 0,
         }
-        if i == 10 and st == "fault":
-            cg["error_code"] = "E-07"
-            cg["error_desc"] = "Falha na comunicação OCPP"
-        if i == 9 and st == "offline":
-            cg["offline_reason"] = "Manutenção programada"
-        chargers.append(cg)
+        if status == "fault":
+            c["error_code"] = random.choice(["E-04", "E-07", "E-12"])
+            c["fault_since"] = (
+                datetime.now() - timedelta(minutes=random.randint(10, 180))
+            ).strftime("%H:%M")
+        chargers.append(c)
 
+    faults  = [c for c in chargers if c["status"] == "fault"]
+    offline = [c for c in chargers if c["status"] == "offline"]
     return {
-        "timestamp": now.isoformat(),
-        "network": {
-            "total_chargers": len(chargers),
-            "online": sum(1 for c in chargers if c["status"] in ("online","in_use")),
-            "in_use": sum(1 for c in chargers if c["status"] == "in_use"),
-            "offline": sum(1 for c in chargers if c["status"] == "offline"),
-            "fault": sum(1 for c in chargers if c["status"] == "fault"),
-            "total_power_kw": round(sum(c["power_kw"] for c in chargers), 1),
-        },
-        "chargers": chargers,
-        "active_alerts": [{
-            "charger_id": "CG-10",
-            "severity": "medium",
-            "code": "E-07",
-            "message": "Falha na comunicação OCPP",
-            "since": (now - timedelta(hours=2, minutes=15)).strftime("%H:%M"),
-        }],
+        "total_chargers": 12,
+        "online": sum(1 for c in chargers if c["status"] in ["online", "in_use"]),
+        "fault": len(faults),
+        "offline": len(offline),
+        "in_use": sum(1 for c in chargers if c["status"] == "in_use"),
+        "total_power_kw": round(sum(c["power_kw"] for c in chargers), 1),
+        "faults": faults,
+        "offline_units": offline,
     }
 
 
-def get_financials(period: str = "today") -> dict:
-    data = {
-        "today":  {"revenue": 847.50,  "sessions": 34,  "avg_min": 38},
-        "week":   {"revenue": 5840.00, "sessions": 231, "avg_min": 36},
-        "month":  {"revenue": 10420.00,"sessions": 412, "avg_min": 37},
-    }.get(period, {"revenue": 847.50, "sessions": 34, "avg_min": 38})
+def get_financial_data() -> dict:
+    rt = round(random.uniform(600, 1100), 2)
     return {
-        "period": period, "currency": "BRL",
-        "revenue": data["revenue"], "sessions": data["sessions"],
-        "avg_session_duration_min": data["avg_min"],
-        "peak_hour": "18h–20h", "best_day": "Sexta-feira",
-        "monthly_target": 22000.00, "monthly_projection": 24180.00,
-        "yesterday_revenue": 923.00, "monthly_avg_daily": 810.00,
+        "receita_hoje_brl":             rt,
+        "receita_ontem_brl":            round(random.uniform(700, 1050), 2),
+        "media_diaria_mensal_brl":      round(random.uniform(780, 870), 2),
+        "sessoes_hoje":                 random.randint(22, 48),
+        "duracao_media_sessao_min":     random.randint(28, 55),
+        "horario_pico":                 "18h–20h",
+        "receita_mes_atual_brl":        round(rt * datetime.now().day * 0.95, 2),
+        "projecao_mes_brl":             round(rt * 30, 2),
+        "meta_mensal_brl":              22000.00,
     }
 
 
-def get_error_info(code: str) -> dict:
-    db = {
-        "E-04": {
-            "name": "Falha de autenticação RFID",
-            "causes": ["Cartão danificado/desmagnetizado","Leitor sujo","Credencial expirada"],
-            "workaround": "Usar autenticação via QR Code ou app.",
-            "severity": "low", "charger_operational": True,
+def get_active_alerts() -> list:
+    pool = [
+        {
+            "id": "ALT-001",
+            "hora": (datetime.now() - timedelta(minutes=23)).strftime("%H:%M"),
+            "tipo": "power_spike", "severidade": "medio",
+            "carregador": "CG-05",
+            "mensagem": "Consumo 24kW detectado — limite: 11kW",
+            "acao": "Verificar cabo e config de potência do CG-05",
         },
-        "E-07": {
-            "name": "Falha na comunicação OCPP",
-            "causes": ["Queda de rede no local","Servidor OCPP inacessível","Certificado SSL expirado"],
-            "workaround": "Reiniciar módulo de comunicação via painel remoto.",
-            "severity": "medium", "charger_operational": False,
+        {
+            "id": "ALT-002",
+            "hora": (datetime.now() - timedelta(minutes=67)).strftime("%H:%M"),
+            "tipo": "communication_loss", "severidade": "alto",
+            "carregador": "CG-08",
+            "mensagem": "Perda de comunicação OCPP há 67 minutos",
+            "acao": "Verificar conectividade de rede do CG-08",
         },
-        "E-12": {
-            "name": "Sobrecorrente detectada",
-            "causes": ["Cabo de carga danificado","Falha no contator interno","Veículo com BMS defeituoso"],
-            "workaround": "Isolar o carregador e acionar suporte técnico imediatamente.",
-            "severity": "high", "charger_operational": False,
-        },
+    ]
+    return pool[:random.choice([0, 0, 1, 2])]
+
+
+def build_context_block() -> str:
+    ctx = {
+        "horario": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "rede": get_network_status(),
+        "financeiro": get_financial_data(),
+        "alertas_ativos": get_active_alerts(),
     }
-    return db.get(code.upper(), {
-        "name": "Código não encontrado",
-        "causes": ["Consulte o manual técnico GoodWe ou suporte."],
-        "workaround": "Acione suporte GoodWe.",
-        "severity": "unknown", "charger_operational": None,
-    })
+    return json.dumps(ctx, ensure_ascii=False, indent=2)
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# SYSTEM PROMPT
-# ──────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# SYSTEM PROMPT + FEW-SHOT
+# ---------------------------------------------------------------------------
 
-SYSTEM_PROMPT = """Você é o ChargeBot, assistente operacional inteligente da plataforma ChargeGrid Intelligence da GoodWe.
+SYSTEM_PROMPT = """Você é o ChargeBot, assistente operacional da plataforma ChargeGrid Intelligence da GoodWe.
 
-## Identidade e Tom
-- Especialista em gestão de redes de eletropostos (EVSE) e na plataforma GoodWe ChargeGrid.
+## Identidade
+- Especialista em gestão de redes de eletropostos (EVSE) e plataforma GoodWe ChargeGrid.
 - Atende exclusivamente operadores comerciais de redes de recarga de veículos elétricos.
-- Tom: profissional, direto, orientado a dados.
-- Use emojis moderadamente: ✅ online, ⚠️ atenção, ❌ falha, 📊 dados, 💡 dica.
-- Responda SEMPRE em Português do Brasil.
+- Tom: profissional, direto, orientado a dados. Responde SEMPRE em Português do Brasil.
 
-## Contexto — GoodWe ChargeGrid Intelligence
-Plataforma que integra: orquestração de potência, registro de ciclos de carga,
-faturamento automatizado, comunicação de alertas (OCPP) e relatórios operacionais/financeiros.
-
-## Persona do Usuário
-Operador comercial: responsável por rentabilidade e disponibilidade.
-Não é técnico de campo. Precisa de respostas rápidas e acionáveis.
+## Contexto do Negócio
+A GoodWe fornece hardware e software para redes EVSE. O ChargeGrid Intelligence integra:
+orquestração de potência, registro de ciclos, faturamento automatizado, alertas em tempo real e relatórios operacionais.
 
 ## Regras
-SEMPRE: números importantes primeiro; ao identificar problemas: o que é → causas → próximos passos;
-compare financeiros com referências; cite ID do carregador; ofereça próximo passo.
-NUNCA: invente dados fora do contexto; use linguagem alarmista; ignore alertas elétricos.
+SEMPRE: use os dados do [CONTEXTO] injetado · cite IDs dos carregadores (ex: CG-03) · compare dados financeiros com referências (ontem, meta, média) · ofereça próximo passo acionável · use emojis moderadamente (✅⚠️❌📊💡).
+NUNCA: invente dados ausentes no contexto · use tom alarmista · finalize conversa sobre falha sem próximo passo.
 
-## Exemplos (few-shot)
+## Códigos de Erro GoodWe
+E-04: Falha autenticação RFID | E-07: Falha comunicação OCPP | E-12: Sobrecarga de potência | E-15: Temperatura crítica | E-21: Falha no relé
 
-Pergunta: "Quantos carregadores estão online?"
-Resposta: "✅ 10 de 12 carregadores estão operando normalmente (7 em uso ativo).
-⚠️ CG-10 está em falha (E-07 — comunicação OCPP) desde as 14h15.
-🔧 CG-09 offline por manutenção programada.
-Quer que eu abra um chamado para o CG-10 ou gere um relatório de disponibilidade?"
+## Configurações no Dashboard
+Tarifas dinâmicas: Configurações → Tarifas → Nova Regra Tarifária
+Limite de potência: Equipamentos → [ID] → Configurações → Potência Máxima
+Relatórios: Relatórios → Exportar (PDF/CSV)
 
-Pergunta: "Quanto faturamos hoje?"
-Resposta: "📊 Hoje: R$ 847,50 em 34 sessões.
-vs. ontem: -8,2% (R$ 923,00) | vs. média mensal diária: +4,6% (R$ 810,00)
-Desempenho acima da média do mês, levemente abaixo de ontem — consistente para este dia da semana.
-Quer detalhamento por carregador ou projeção mensal?"
+=== EXEMPLOS DE COMPORTAMENTO ===
 
-Pergunta: "O que é o erro E-07?"
-Resposta: "E-07 = Falha na comunicação OCPP — o carregador perdeu contato com o servidor.
-Causas comuns: queda de rede, servidor OCPP reiniciando, certificado SSL expirado.
-O carregador fica offline durante a falha (sem aceitar novas sessões).
-Ação: reinicie o módulo de comunicação pelo painel remoto. Persiste > 15 min → acione suporte."
-"""
+[Status] Usuário: Quantos carregadores online?
+ChargeBot: Temos **10/12** operando (8 disponíveis, 2 em uso). ⚠️ CG-03 em falha (E-07 — OCPP). 🔧 CG-09 offline (manutenção). Quer abrir chamado técnico para o CG-03?
 
+[Receita] Usuário: Receita hoje?
+ChargeBot: R$ 847,50 em 34 sessões. 📊 vs. ontem: -8,2% · vs. média mensal: +4,6%. Acima da média. Quer detalhes por carregador?
 
-# ──────────────────────────────────────────────────────────────────────────────
-# INJEÇÃO DE CONTEXTO DINÂMICO
-# ──────────────────────────────────────────────────────────────────────────────
+[Alerta] Usuário: Teve algum alerta?
+ChargeBot: ⚠️ ALERTA (MÉDIO) — CG-05 às 16h47. Consumo **24kW** (limite: 11kW). Verifique cabo e configuração de potência. Quer abrir chamado?
 
-def build_context_injection(message: str) -> str:
-    msg = message.lower()
-    parts = []
+[Erro] Usuário: Erro E-04 no CG-03?
+ChargeBot: E-04 = falha de autenticação RFID. Causas: cartão danificado, leitor sujo, credencial expirada. Workaround: QR Code ou app. CG-03 segue operacional para outros métodos.
 
-    if any(k in msg for k in ["online","offline","status","carregador","rede","falha",
-                                "erro","alerta","potência","quantos","problema","funciona"]):
-        parts.append("[DADOS EM TEMPO REAL — Rede]\n" +
-                     json.dumps(get_network_status(), ensure_ascii=False, indent=2))
+[Config] Usuário: Como configuro tarifa para horário de pico?
+ChargeBot: Dashboard → Configurações → Tarifas → Nova Regra Tarifária. Defina 18h–20h, valor por kWh e ative. Mudança entra na próxima sessão. 💡 Avise os usuários frequentes pelo app antes de ativar.
 
-    if any(k in msg for k in ["receita","faturamento","sessão","sessões","hoje",
-                                "semana","mês","mes","meta","projeção","faturou"]):
-        period = "week" if "semana" in msg else ("month" if "mês" in msg or "mes" in msg else "today")
-        parts.append(f"[DADOS EM TEMPO REAL — Financeiro ({period})]\n" +
-                     json.dumps(get_financials(period), ensure_ascii=False, indent=2))
-
-    for code in re.findall(r'\bE-\d{2}\b', message.upper()):
-        parts.append(f"[BASE DE CONHECIMENTO — {code}]\n" +
-                     json.dumps(get_error_info(code), ensure_ascii=False, indent=2))
-
-    return "\n\n".join(parts)
+=== FIM DOS EXEMPLOS ==="""
 
 
-# ──────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # GERENCIADOR DE HISTÓRICO
-# ──────────────────────────────────────────────────────────────────────────────
+# O Gemini usa formato {"role": "user"/"model", "parts": ["texto"]}
+# ---------------------------------------------------------------------------
 
 class ConversationHistory:
-    MAX_TURNS = 10
+    def __init__(self, max_turns: int = 10):
+        self.max_turns = max_turns
+        self._history = []
 
-    def __init__(self):
-        self.messages: list[dict] = []
+    def add(self, role: str, text: str):
+        # Gemini usa "model" em vez de "assistant"
+        gemini_role = "model" if role == "assistant" else "user"
+        self._history.append({"role": gemini_role, "parts": [text]})
+        max_messages = self.max_turns * 2
+        if len(self._history) > max_messages:
+            self._history = self._history[-max_messages:]
 
-    def add(self, role: str, content: str):
-        self.messages.append({"role": role, "content": content})
-        if len(self.messages) > self.MAX_TURNS * 2:
-            self.messages = self.messages[-(self.MAX_TURNS * 2):]
-
-    def get(self) -> list[dict]:
-        return self.messages.copy()
+    def get(self):
+        return self._history.copy()
 
     def clear(self):
-        self.messages = []
+        self._history = []
+        print("\n🗑️  Histórico limpo. Nova conversa iniciada.\n")
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# CHARGEBOT
-# ──────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# MOTOR DO CHATBOT
+# ---------------------------------------------------------------------------
 
 class ChargeBot:
-    MODEL       = "gpt-4o"
-    TEMPERATURE = 0.3
-    MAX_TOKENS  = 800
-
     def __init__(self):
-        self.client  = get_client()
-        self.history = ConversationHistory()
+        self.model   = get_client()
+        self.history = ConversationHistory(max_turns=10)
 
     def chat(self, user_message: str) -> str:
-        context = build_context_injection(user_message)
-        augmented = user_message + ("\n\n" + context if context else "")
+        context_block = build_context_block()
+        enriched = f"{user_message}\n\n[CONTEXTO]\n{context_block}"
 
-        self.history.add("user", user_message)
+        # Inicia sessão de chat com histórico
+        session = self.model.start_chat(history=self.history.get())
+        response = session.send_message(enriched)
+        reply = response.text.strip()
 
-        hist = self.history.get()
-        payload = [{"role": "system", "content": SYSTEM_PROMPT}]
-        if len(hist) > 1:
-            payload.extend(hist[:-1])
-        payload.append({"role": "user", "content": augmented})
-
-        response = self.client.chat.completions.create(
-            model=self.MODEL,
-            temperature=self.TEMPERATURE,
-            max_tokens=self.MAX_TOKENS,
-            messages=payload,
-        )
-        reply = response.choices[0].message.content.strip()
+        # Salva no histórico a mensagem original (sem o bloco de contexto)
+        self.history.add("user",      user_message)
         self.history.add("assistant", reply)
         return reply
 
-    def run(self):
-        print("\n" + "═"*58)
-        print("  ⚡  ChargeBot — GoodWe ChargeGrid Intelligence")
-        print("  EV Challenge 2026 · FIAP")
-        print("  Modelo: GPT-4o | Temp: 0.3 | Memória: 10 turnos")
-        print("═"*58)
-        print("  Comandos: 'limpar' | 'status' | 'sair'")
-        print("═"*58 + "\n")
+    def reset(self):
+        self.history.clear()
 
-        while True:
-            try:
-                user_input = input("Você: ").strip()
-            except (KeyboardInterrupt, EOFError):
-                print("\n\n👋 Sessão encerrada.")
-                break
 
-            if not user_input:
-                continue
-            if user_input.lower() == "sair":
-                print("\n👋 Sessão encerrada.")
-                break
-            if user_input.lower() == "limpar":
-                self.history.clear()
-                print("🗑️  Histórico limpo.\n")
-                continue
-            if user_input.lower() == "status":
-                print(json.dumps(get_network_status(), ensure_ascii=False, indent=2) + "\n")
-                continue
+# ---------------------------------------------------------------------------
+# INTERFACE CLI
+# ---------------------------------------------------------------------------
 
+BANNER = """
+╔══════════════════════════════════════════════════════════════╗
+║         ⚡ ChargeBot — ChargeGrid Intelligence              ║
+║         GoodWe × FIAP · EV Challenge 2026 · Sprint 2       ║
+║         Motor: Google Gemini (gratuito)                     ║
+╠══════════════════════════════════════════════════════════════╣
+║  /reset  → limpa o histórico                                ║
+║  /status → exibe dados brutos da rede (JSON)               ║
+║  /ajuda  → exibe este menu                                  ║
+║  /sair   → encerra o chatbot                               ║
+╚══════════════════════════════════════════════════════════════╝
+"""
+
+def run_cli():
+    print(BANNER)
+    try:
+        bot = ChargeBot()
+    except EnvironmentError as e:
+        print(f"❌ Erro de configuração:\n{e}")
+        return
+
+    print("✅ ChargeBot pronto! Digite sua pergunta sobre a rede de eletropostos.\n")
+
+    while True:
+        try:
+            user_input = input("Você: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n\nChargeBot encerrado. Até logo! ⚡")
+            break
+
+        if not user_input:
+            continue
+
+        cmd = user_input.lower()
+        if cmd == "/sair":
+            print("\nChargeBot encerrado. Até logo! ⚡")
+            break
+        elif cmd == "/reset":
+            bot.reset()
+        elif cmd == "/status":
+            print("\n📡 Dados brutos da rede:\n")
+            print(build_context_block())
+            print()
+        elif cmd == "/ajuda":
+            print(BANNER)
+        else:
             print("\nChargeBot: ", end="", flush=True)
             try:
-                print(self.chat(user_input))
+                print(bot.chat(user_input))
             except Exception as e:
-                print(f"[ERRO] {e}")
+                print(f"❌ Erro: {e}")
             print()
 
-
 if __name__ == "__main__":
-    bot = ChargeBot()
-    bot.run()
-
+    run_cli()
