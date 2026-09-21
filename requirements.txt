@@ -1,5 +1,17 @@
-# ChargeBot — GoodWe EV Challenge 2026
-# Instale com: pip install -r requirements.txt
+# ChargeBot GoodWe — Sprint 3
+# pip install -r requirements.txt
 
-openai>=1.30.0          # Cliente oficial OpenAI
-python-dotenv>=1.0.0    # Carrega variáveis de ambiente do arquivo .env
+# LangChain LCEL + Ollama
+langchain>=0.3.0
+langchain-ollama>=0.2.0
+langchain-community>=0.3.0
+langchain-core>=0.3.0
+
+# Pydantic v2 (structured output)
+pydantic>=2.9.0
+
+# Contagem de tokens
+tiktoken>=0.7.0
+
+# Ollama client
+ollama>=0.3.0
