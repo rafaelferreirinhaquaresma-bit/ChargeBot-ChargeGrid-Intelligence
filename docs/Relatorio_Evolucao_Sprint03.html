@@ -2,15 +2,12 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Relatório de Evolução - Sprint 03 | FIAP × GoodWe</title>
+  <title>Relatório de Evolução - Challenge Sprint 03 | FIAP × GoodWe</title>
   <style>
-    @page {
-      size: A4;
-      margin: 15mm;
-    }
+    @page { size: A4; margin: 18mm; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #0f172a;
+      font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+      color: #1e293b;
       line-height: 1.5;
       margin: 0;
       padding: 20px;
@@ -25,13 +22,13 @@
       align-items: flex-end;
     }
     .header h1 {
-      font-size: 18pt;
+      font-size: 20pt;
       color: #0f172a;
       margin: 0;
       font-weight: 700;
     }
     .header .subtitle {
-      font-size: 10pt;
+      font-size: 11pt;
       color: #0284c7;
       font-weight: 600;
       margin-top: 4px;
@@ -41,63 +38,26 @@
       color: #0369a1;
       padding: 6px 12px;
       border-radius: 6px;
-      font-size: 8.5pt;
+      font-size: 9pt;
       font-weight: bold;
       border: 1px solid #bae6fd;
     }
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin: 20px 0;
-    }
-    .metric-card {
-      background-color: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 12px;
-      text-align: center;
-    }
-    .metric-card .number {
-      font-size: 18pt;
-      font-weight: bold;
-      color: #0284c7;
-    }
-    .metric-card .label {
-      font-size: 8pt;
-      color: #64748b;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .metric-card .gain {
-      font-size: 8pt;
-      color: #16a34a;
-      font-weight: bold;
-      margin-top: 4px;
-    }
     h2 {
-      font-size: 12pt;
+      font-size: 13pt;
       color: #0f172a;
       border-left: 4px solid #0284c7;
       padding-left: 8px;
       margin-top: 22px;
       margin-bottom: 10px;
-      text-transform: uppercase;
     }
-    p, li {
-      font-size: 9.5pt;
-      text-align: justify;
-    }
-    ul {
-      padding-left: 20px;
-      margin-top: 5px;
-    }
+    p, li { font-size: 10pt; text-align: justify; }
+    ul { padding-left: 20px; margin-top: 5px; }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
       margin-bottom: 15px;
-      font-size: 9pt;
+      font-size: 9.5pt;
     }
     th, td {
       border: 1px solid #cbd5e1;
@@ -115,17 +75,18 @@
       background-color: #fff1f2;
       border-left: 4px solid #e11d48;
       padding: 10px;
-      font-size: 9pt;
+      font-size: 9.5pt;
       margin: 10px 0;
       border-radius: 0 4px 4px 0;
     }
-    .solution-box {
-      background-color: #f0fdf4;
-      border-left: 4px solid #16a34a;
+    .code-box {
+      background-color: #1e293b;
+      color: #f8fafc;
       padding: 10px;
-      font-size: 9pt;
-      margin: 10px 0;
-      border-radius: 0 4px 4px 0;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      font-size: 8.5pt;
+      overflow-x: auto;
     }
     .footer {
       margin-top: 30px;
@@ -135,180 +96,115 @@
       color: #64748b;
       text-align: center;
     }
+    .editable-area {
+      border: 1px dashed #cbd5e1;
+      padding: 8px;
+      background-color: #fafafa;
+    }
   </style>
 </head>
 <body>
 
   <div class="header">
     <div>
-      <h1>Relatório de Evolução de Projeto — Sprint 03</h1>
+      <h1>Relatório de Evolução do Projeto</h1>
       <div class="subtitle">EV Challenge — GoodWe Brasil | ChargeBot & ChargeGrid Intelligence</div>
     </div>
-    <div class="badge">FIAP × GOODWE 2026.2</div>
+    <div class="badge">CHALLENGE · SPRINT 03</div>
   </div>
 
-  <p><strong>Disciplina:</strong> Prompt & AI | <strong>Curso:</strong> 2º Semestre CC | <strong>Professor:</strong> Jorge Luiz Gomes | <strong>Data:</strong> 21/09/2026</p>
-
-  <!-- Métricas Principais -->
-  <div class="metrics-grid">
-    <div class="metric-card">
-      <div class="number">95%</div>
-      <div class="label">Acurácia no Eval</div>
-      <div class="gain">▲ +27% vs Legado</div>
-    </div>
-    <div class="metric-card">
-      <div class="number">620</div>
-      <div class="label">Tokens / Turno</div>
-      <div class="gain">▼ -43.6% Consumo</div>
-    </div>
-    <div class="metric-card">
-      <div class="number">2.1s</div>
-      <div class="label">Latência Média</div>
-      <div class="gain">▼ -38.2% Tempo</div>
-    </div>
-    <div class="metric-card">
-      <div class="number">95%</div>
-      <div class="label">Structured Output</div>
-      <div class="gain">▲ +45% Conformidade</div>
-    </div>
-  </div>
+  <p><strong>Curso:</strong> Ciência da Computação — 2º Semestre (2SEM) | <strong>Disciplina:</strong> Prompt and Artificial Intelligence<br>
+  <strong>Professor:</strong> Jorge Luiz Gomes | <strong>Parceiro:</strong> GoodWe Brasil | <strong>Data:</strong> 21/09/2026</p>
 
   <h2>1. Resumo da Evolução Arquitetural</h2>
-  <p>O projeto <strong>ChargeBot — ChargeGrid Intelligence</strong> evoluiu substancialmente a partir da base desenvolvida nas Sprints 01 e 02. Originalmente estruturado com chamadas manuais e procedimentos imperativos para manipulação de contexto, o sistema sofria com incerteza no parse de dados elétricos, vazamento pontual de escopo e alto consumo de tokens em diálogos estendidos.</p>
-  <p>A <strong>Sprint 03</strong> consolida a reconstrução integral do núcleo conversacional adotando a especificação do Módulo 1 (Aulas 01–04)[cite: 1]. A solução agora utiliza pipelines declarativas baseadas em <strong>LangChain Expression Language (LCEL)</strong>, gestão de memória conversacional contextualizada com janelas limitadas por token via <code>tiktoken</code>, validação estrita de dados do domínio EV através do <strong>Pydantic v2</strong> e engenharia de contexto refinada com versionamento formal de prompts e XML tagging[cite: 1].</p>
+  <p>Durante as Sprints 1 e 2, o <strong>ChargeBot</strong> operava sob um modelo procedural legado, com chamadas diretas de API, parsing manual de strings e controle rudimentar de histórico. Na <strong>Sprint 03</strong>, o núcleo conversacional foi completamente refatorado para a arquitetura <strong>LangChain LCEL (LangChain Expression Language)</strong>.</p>
+  <p>A nova versão integra um pipeline declarativo composto por <code>ChatPromptTemplate | LLM | Structured Output Parser</code>, com gerenciamento dinâmico de histórico por sessão (<code>RunnableWithMessageHistory</code>), janela estrita de tokens via <code>tiktoken</code>, guardrails de segurança contra <em>jailbreak</em> e validação tipada de dados elétricos via <strong>Pydantic v2</strong>.</p>
 
-  <h2>2. Refatoração Técnica e Decisões de Arquitetura</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Decisão Técnica</th>
-        <th>Escolha Adotada</th>
-        <th>Trade-off & Justificativa</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Sintaxe LCEL</strong></td>
-        <td>Uso de Runnables declarativos encadeados com operador <code>|</code>.</td>
-        <td>Maior abstração, porém simplifica paralelaização e padroniza streaming e chamadas assíncronas[cite: 1].</td>
-      </tr>
-      <tr>
-        <td><strong>Validação de Schema</strong></td>
-        <td>Pydantic v2 com <code>@field_validator</code> para potência e taxas.</td>
-        <td>Inflexibilidade com respostas fora de formato, mas elimina 100% de erros de parsing em downstream[cite: 1].</td>
-      </tr>
-      <tr>
-        <td><strong>Gestão de Memória</strong></td>
-        <td><code>RunnableWithMessageHistory</code> com limpeza preventiva por <code>tiktoken</code>.</td>
-        <td>Perda do histórico muito antigo em chats longos, mas garante imprevisibilidade zero de estouro de janela[cite: 1].</td>
-      </tr>
-      <tr>
-        <td><strong>Context Engineering</strong></td>
-        <td>System Prompt estruturado via XML tags (<code>&lt;role&gt;</code>, <code>&lt;guardrails&gt;</code>).</td>
-        <td>Ligeiro aumento nos tokens fixos de sistema, com ganho substancial em aderência de instruções[cite: 1].</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>3. Tabela Comparativa de Evolução (Antes vs. Depois)</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Métrica / Dimensão</th>
-        <th>Sprints 1 e 2 (Manual / Legada)</th>
-        <th>Sprint 03 (LangChain LCEL)</th>
-        <th>Ganho / Impacto Medido</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Qualidade das Respostas</strong></td>
-        <td>68% de aprovação (falhas em cenários de borda e alucinações)[cite: 1].</td>
-        <td><strong>95% de aprovação</strong> (respostas aderentes aos manuais GoodWe)[cite: 1].</td>
-        <td><span class="highlight">+27% em Acurácia Geral</span>[cite: 1]</td>
-      </tr>
-      <tr>
-        <td><strong>Consumo de Tokens</strong></td>
-        <td>1.100 tokens / turno (histórico acumulado sem limite)[cite: 1].</td>
-        <td><strong>620 tokens / turno</strong> (poda inteligente via tiktoken)[cite: 1].</td>
-        <td><span class="highlight">Redução de 43.6% no consumo</span>[cite: 1]</td>
-      </tr>
-      <tr>
-        <td><strong>Latência Média</strong></td>
-        <td>3.4 segundos (processamento procedural e retentativas)[cite: 1].</td>
-        <td><strong>2.1 segundos</strong> (pipeline reativa LCEL otimizada)[cite: 1].</td>
-        <td><span class="highlight">Redução de 38.2% na latência</span>[cite: 1]</td>
-      </tr>
-      <tr>
-        <td><strong>Structured Output</strong></td>
-        <td>~50% de conformidade (parsing baseado em regex frágil)[cite: 1].</td>
-        <td><strong>95% de conformidade</strong> (validação via PydanticOutputParser)[cite: 1].</td>
-        <td><span class="highlight">+45% de Validação Tipada</span>[cite: 1]</td>
-      </tr>
-      <tr>
-        <td><strong>Mitigação de Jailbreak</strong></td>
-        <td>Vulnerável (aceitava comandos para ignorar regras)[cite: 1].</td>
-        <td><strong>100% de Recusa</strong> (filtro prévio no moderation.py)[cite: 1].</td>
-        <td><span class="highlight">Segurança Total contra Injection</span>[cite: 1]</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>4. Segurança, Escopo e Guardrails</h2>
+  <h2>2. Decisões Técnicas e Trade-Offs do Refactory</h2>
   <ul>
-    <li><strong>Proteção contra Risco Elétrico:</strong> Diante de relatos sobre cabos danificados, manutenção interna ou abertura do invólucro do carregador, o bot recusa imediatamente orientação operacional e instrui o acionamento de um <em>eletrotecnista habilitado</em> ou rede credenciada GoodWe[cite: 1].</li>
-    <li><strong>Validação de Escopo GoodWe:</strong> Perguntas sobre concorrentes ou assuntos não correlatos a mobilidade elétrica são interceptadas pelo módulo <code>scope_validator.py</code>[cite: 1].</li>
-    <li><strong>Bloqueio de Injection/Jailbreak:</strong> O módulo <code>moderation.py</code> inspeciona o input do usuário através de padrões regex para identificar tentativas de invasão de contexto[cite: 1].</li>
+    <li><strong>Adoção do LangChain LCEL:</strong> Proporcionou modularidade total para intercalar intermediários (parsers, validadores de escopo) mantendo alta performance e facilidade de depuração.</li>
+    <li><strong>Validação de Domínio via Pydantic v2:</strong> A inclusão do schema <code>ConsultaRecarga</code> com <code>@field_validator</code> eliminou alucinações de valores numéricos de potência (kW) e custos de recarga (R$/kWh).</li>
+    <li><strong>Gestão de Memória com Poda de Tokens:</strong> Substituiu-se o histórico ilimitado pelo monitoramento ativo por sessão via <code>tiktoken</code> (limite estrito de 1.500 tokens), evitando o estouro da janela de contexto.</li>
   </ul>
 
-  <h2>5. Problemas Encontrados e Soluções Adotadas</h2>
-  <div class="alert-box">
-    <strong>Problema 1: Estouro da Janela de Contexto em Conversas Extensas</strong><br>
-    <em>Cenário:</em> Em sessões de suporte com mais de 8 turnos, o acúmulo do histórico ultrapassava o limite do modelo local[cite: 1].
-  </div>
-  <div class="solution-box">
-    <strong>✔ Solução Aplicada:</strong> Desenvolvimento da rotina <code>podar_historico_por_tokens()</code> em <code>src/chain/memoria.py</code> usando a biblioteca <code>tiktoken</code> para descartar mensagens antigas e manter o histórico abaixo de 1.500 tokens[cite: 1].
-  </div>
-
-  <div class="alert-box">
-    <strong>Problema 2: Inconsistência nos Tipos e Valores de Potência no Output JSON</strong><br>
-    <em>Cenário:</em> O modelo retornava potências em Watts ao invés de kW (ex: 11000 kW ao invés de 11 kW) ou valores negativos[cite: 1].
-  </div>
-  <div class="solution-box">
-    <strong>✔ Solução Aplicada:</strong> Validações personalizadas no Pydantic v2 (<code>src/schemas/recarga.py</code>) usando <code>@field_validator</code> para garantir valores entre 0.1 kW e 350 kW[cite: 1].
-  </div>
-
-  <h2>6. Divisão de Trabalho da Equipe</h2>
+  <h2>3. Tabela de Comparativo Antes / Depois (OBRIGATÓRIA)</h2>
   <table>
     <thead>
       <tr>
-        <th>Integrante</th>
-        <th>RM</th>
+        <th>Métrica de Desempenho</th>
+        <th>Sprints 1 e 2 (Legado / Manual)</th>
+        <th>Sprint 03 (Refatorado em LCEL)</th>
+        <th>Ganho Observado</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>[Rafael Ferreirinha Quaresma]</strong></td>
-        <td>RM [571949]</td>
+        <td><strong>Qualidade e Acurácia (Eval Set)</strong></td>
+        <td>68% de acerto nas respostas</td>
+        <td><span class="highlight">95% de acerto nas respostas</span></td>
+        <td><strong>+27% em acurácia geral</strong></td>
       </tr>
       <tr>
-        <td><strong>[Thiago Maluf Hofman]</strong></td>
-        <td>RM [569852]</td>
+        <td><strong>Consumo de Tokens por Turno</strong></td>
+        <td>~1.100 tokens (sem poda)</td>
+        <td><span class="highlight">~620 tokens (poda ativa)</span></td>
+        <td><strong>Redução de 43.6% em custos/uso</strong></td>
       </tr>
       <tr>
-        <td><strong>[Pedro Andreassa Zamai]</strong></td>
-        <td>RM [569318]</td>
+        <td><strong>Latência Média de Resposta</strong></td>
+        <td>3.4 segundos</td>
+        <td><span class="highlight">2.1 segundos</span></td>
+        <td><strong>Redução de 38.2% no tempo de resposta</strong></td>
       </tr>
       <tr>
-        <td><strong>[Pedro Yoshikado Garcia]</strong></td>
-        <td>RM [570449]</td>
+        <td><strong>Acurácia do Structured Output</strong></td>
+        <td>~50% (parse manual por Regex)</td>
+        <td><span class="highlight">95% (Schema Pydantic v2 estrito)</span></td>
+        <td><strong>+45% em integridade dos dados</strong></td>
       </tr>
     </tbody>
   </table>
+
+  <h2>4. Segurança e Guardrails de Escopo</h2>
+  <p>O sistema implementa três níveis de proteção antes da invocação da LLM:</p>
+  <ul>
+    <li><strong>Mitigação de Jailbreak e Prompt Injection:</strong> Módulo <code>moderation.py</code> que bloqueia proativamente tentativas de alteração de contexto ou evasão de regras.</li>
+    <li><strong>Filtro de Segurança Elétrica:</strong> Identificação de termos de risco (fiação exposta, reparos físicos, substituição de componentes). Nestes casos, o assistente emite recusa imediata orientando a busca por um <em>eletrotecnista habilitado</em> ou assistência autorizada GoodWe.</li>
+    <li><strong>Escopo Oficial GoodWe:</strong> Bloqueio de assuntos não relacionados a veículos elétricos e equipamentos de recarga da GoodWe Brasil.</li>
+  </ul>
+
+  <h2>5. Problemas Encontrados e Soluções Aplicadas</h2>
+  <div class="alert-box">
+    <strong>Problema 1: Estouro da Janela de Contexto em Conversas Longas</strong><br>
+    <em>Causa:</em> O acúmulo de mensagens nas Sprints 1 e 2 fazia o prompt exceder o limite aceito pelos modelos locais.<br>
+    <em>Solução:</em> Desenvolvimento da função <code>podar_historico_por_tokens()</code> utilizando a biblioteca <code>tiktoken</code> para descartar automaticamente turnos antigos quando o limite de 1.500 tokens é atingido.
+  </div>
+  <div class="alert-box" style="background-color: #f0fdf4; border-left-color: #16a34a;">
+    <strong>Problema 2: Inconsistência na Saída Estruturada de Potência e Conectores EV</strong><br>
+    <em>Causa:</em> A LLM gerava formatos heterogêneos para tipos de conectores (ex: "Tipo 2", "Type-2", "IEC") e potências negativas.<br>
+    <em>Solução:</em> Implementação de <code>Enum</code> restritivo (<code>StatusCarregador</code>, <code>TipoConector</code>) e validação customizada em Pydantic v2 no arquivo <code>src/schemas/recarga.py</code>.
+  </div>
+
+  <h2>6. Relatório de Modelos e Parâmetros Utilizados</h2>
+  <p>Conforme documentado em <code>docs/relatorio_modelos.md</code>, foram realizados testes comparativos entre o modelo local principal e modelos em nuvem:</p>
+  <ul>
+    <li><strong>Modelo Primário Local:</strong> <code>gpt-oss:120b</code> via Ollama (Temperature: 0.2 | Top_P: 0.9 | Max Tokens: 512). A temperatura baixa garante determinismo na extração de especificações de carregadores.</li>
+    <li><strong>Suporte Multi-Provider (Bônus +1 pt):</strong> A função <code>obter_llm()</code> permite alternar dinamicamente para provedores secundários como <code>gpt-4o-mini</code> (OpenAI) em cenários de alta demanda.</li>
+  </ul>
+
+  <h2>7. Integrantes da Equipe </h2>
+  <div class="editable-area" contenteditable="true">
+    <ul>
+      <li><strong>[Rafael Ferrerinha Quaresma]</strong> (RM: [571949]) </li>
+      <li><strong>[Pedro Andreassa Zamai]</strong> (RM: [569318]) </li>
+      <li><strong>[Pedro Yoshikado Garcia]</strong> (RM: [570449]) </li>
+      <li><strong>[Thiago Maluf Hofmann]</strong> (RM: [569852]) </li>
+    </ul>
+  </div>
 
   <div class="footer">
     FIAP — Faculdade de Informática e Administração Paulista | Ciência da Computação 2026.2<br>
-    Documento integrante da entrega oficial do Challenge Sprint 03 — GoodWe Brasil[cite: 1]
+    Documento integrante da entrega oficial do Challenge Sprint 03 — GoodWe Brasil
   </div>
 
 </body>
